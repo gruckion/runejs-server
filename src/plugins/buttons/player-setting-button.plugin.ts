@@ -11,7 +11,6 @@ const buttonIds: number[] = [
     7, 8, 9, 10, // screen brightness
     1, // chat effects
     4, // accept aid
-    5, // house options
 ];
 
 export const handler: buttonActionHandler = (details) => {

@@ -68,6 +68,7 @@ export const roomTemplates: { [key in RoomType]: Position } = {
  * A map of room builder widget button ids to their respective room types.
  */
 export const roomBuilderButtonMap: { [key: number]: RoomType } = {
+    // TODO (Stephen): add doors for the other themed floors
     160: 'parlor',
     161: 'garden',
     162: 'kitchen',

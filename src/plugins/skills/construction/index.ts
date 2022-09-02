@@ -1,9 +1,11 @@
 import { PlayerCommandAction } from '@engine/action';
 import { PlayerInitAction } from '@engine/action';
 import { instance1, instance1Max, instance2, instance2Max, roomBuilderButtonMap } from './con-constants';
-import { doorHotspotHandler, roomBuilderWidgetHandler } from '@plugins/skills/construction/room-builder';
-import { openHouse } from '@plugins/skills/construction/house';
-import { saveHouse } from '@plugins/skills/construction/home-saver';
+import { doorHotspotHandler, roomBuilderWidgetHandler } from './room-builder';
+import { openHouse } from './house';
+import { saveHouse } from './home-saver';
+import { widgets } from '@engine/config';
+import { houseOptions } from './house-options';
 
 
 export default {
@@ -11,12 +13,19 @@ export default {
     hooks: [
         {
             type: 'button',
-            widgetIds: 402,
+            widgetIds: widgets.poh.roomCreationMenu,
             buttonIds: Object.keys(roomBuilderButtonMap).map(key => parseInt(key, 10)),
             handler: roomBuilderWidgetHandler
         },
         {
+            type: 'button',
+            widgetId: widgets.settingsTab,
+            buttonIds: 5,
+            handler: houseOptions
+        },
+        {
             type: 'object_interaction',
+            // TODO (Sigex): Doors for first style POH only, need to allow other floors too
             objectIds: [ 15313, 15314 ],
             options: 'build',
             walkTo: true,

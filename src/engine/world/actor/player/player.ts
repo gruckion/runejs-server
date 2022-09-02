@@ -75,6 +75,8 @@ export enum SidebarTab {
     EQUIMENT,
     PRAYER,
     MAGIC,
+    // Sigex: Empty space needed to ensue enum index matches with sidebar tab position
+    EMPTY,
     FRIENDS,
     IGNORE,
     LOGOUT,
@@ -578,6 +580,31 @@ export class Player extends Actor {
      */
     public setSidebarWidget(sidebarId: SidebarTab, widgetId: number | null): void {
         this.outgoingPackets.sendTabWidget(sidebarId, widgetId || null);
+    }
+    /**
+     * Sets all of players side bars to the default tabs
+     */
+    public initializeSidebarWidgets() {
+        defaultPlayerTabWidgets().forEach((widgetId: number, tabIndex: number) => {
+            if(widgetId !== -1) {
+                this.setSidebarWidget(tabIndex, widgetId);
+            }
+        });
+    }
+
+    /**
+     * Hide all sidebars except those provided in the excluded list
+     * @param excludedSidebars sidebars to not hide
+     */
+    public hideAllSidebarWidgets(excludedSidebars: SidebarTab[] = []) {
+
+        for(let i = 0; i < Object.keys(SidebarTab).length; i++) {
+            if (excludedSidebars.includes(i)) {
+                continue
+            }
+            this.outgoingPackets.sendTabWidget(i, null);
+
+        }
     }
 
     /**
