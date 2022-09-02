@@ -1,4 +1,4 @@
-import { defaultPlayerTabWidgets, Player } from '@engine/world/actor/player/player';
+import { Player } from '@engine/world/actor/player/player';
 import { dialogue, Emote, execute } from '@engine/world/actor/dialogue';
 import { updateCombatStyleWidget } from '@plugins/combat/combat-styles.plugin';
 import { QuestDialogueHandler } from '@engine/config/quest-config';
@@ -27,11 +27,7 @@ export const runescapeGuideDialogueHandler: QuestDialogueHandler = {
                         player.savedMetadata.tutorialComplete = true;
                         player.setQuestProgress('tyn:goblin_diplomacy', 'complete');
                         player.instance = null;
-                        defaultPlayerTabWidgets().forEach((widgetId: number, tabIndex: number) => {
-                            if(widgetId !== -1) {
-                                player.setSidebarWidget(tabIndex, widgetId);
-                            }
-                        });
+                        player.initializeSidebarWidgets();
                         updateCombatStyleWidget(player);
                         player.metadata.blockObjectInteractions = false;
                     })

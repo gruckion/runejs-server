@@ -1,4 +1,4 @@
-import { defaultPlayerTabWidgets, Player } from '@engine/world/actor/player/player';
+import { defaultPlayerTabWidgets, Player, SidebarTab } from '@engine/world/actor/player/player';
 import { questDialogueActionFactory, QuestJournalHandler } from '@engine/config/quest-config';
 import { serverConfig } from '@server/game/game-server';
 import uuidv4 from 'uuid/v4';
@@ -96,11 +96,8 @@ export function npcHint(player: Player, npcKey: string | number): void {
 export const startTutorial = async (player: Player): Promise<void> => {
     player.setQuestProgress('tyn:goblin_diplomacy', 0);
 
-    defaultPlayerTabWidgets().forEach((widgetId: number, tabIndex: number) => {
-        if(widgetId !== -1) {
-            player.outgoingPackets.sendTabWidget(tabIndex, widgetId === widgets.logoutTab ? widgetId : null);
-        }
-    });
+    player.hideAllSidebarWidgets([SidebarTab.LOGOUT])
+
 
     player.inventory.add('rs:pot');
     player.inventory.add('rs:logs');
@@ -151,11 +148,7 @@ export async function tutorialHandler(player: Player): Promise<void> {
     const progress = player.getQuest('tyn:goblin_diplomacy').progress;
     const handler = goblinDiplomacyStageHandler[progress];
 
-    defaultPlayerTabWidgets().forEach((widgetId: number, tabIndex: number) => {
-        if(widgetId !== -1) {
-            player.setSidebarWidget(tabIndex, widgetId === widgets.logoutTab ? widgetId : null);
-        }
-    });
+    player.initializeSidebarWidgets();
 
     if(handler) {
         player.outgoingPackets.resetNpcHintIcon();
@@ -175,11 +168,7 @@ const tutorialInitAction: playerInitActionHandler = async ({ player }) => {
         spawnQuestNpcs(player);
         await tutorialHandler(player);
     } else {
-        defaultPlayerTabWidgets().forEach((widgetId: number, tabIndex: number) => {
-            if(widgetId !== -1) {
-                player.setSidebarWidget(tabIndex, widgetId);
-            }
-        });
+        player.initializeSidebarWidgets();
     }
 };
 
