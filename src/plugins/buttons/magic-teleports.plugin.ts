@@ -4,6 +4,8 @@ import { Position } from '@engine/world/position';
 import { animationIds } from '@engine/world/config/animation-ids';
 import { soundIds } from '@engine/world/config/sound-ids';
 import { gfxIds } from '@engine/world/config/gfx-ids';
+import { openHouseWithWelcome } from '@plugins/skills/construction/house';
+import { randomBetween } from '@engine/util';
 
 enum Teleports {
     Home = 591,
@@ -14,11 +16,14 @@ enum Teleports {
     Ardougne = 388,
     Watchtower = 389,
     Trollheim = 492,
-    Ape_atoll = 569
+    Ape_atoll = 569,
+    House = 581
 }
 
 const buttonIds: number[] = [
-    591, // Home Teleport
+    Teleports.Home,
+    Teleports.House,
+    Teleports.Lumbridge
 ];
 
 function homeTeleport(player: Player, elapsedTicks: number): boolean {
@@ -58,8 +63,15 @@ export const activate = (task: TaskExecutor<ButtonAction>, elapsedTicks: number 
         case Teleports.Home:
             completed = homeTeleport(player, elapsedTicks);
             break;
+        case Teleports.House:
+            openHouseWithWelcome(player);
+            completed = true;
+            break;
+        case Teleports.Lumbridge:
+            player.teleport(new Position(3221 + randomBetween(0, 3), 3218 + randomBetween(0, 3)));
+            completed = true;
+            break;
     }
-
     if(completed) {
         task.stop();
     }
