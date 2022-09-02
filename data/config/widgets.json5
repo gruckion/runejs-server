@@ -64,6 +64,12 @@
     prayerTab: 271,
     standardSpellbookTab: 192,
     questTab: 274,
+    poh: {
+        furnitureCreationMenu: 394,
+        noPlaceLikeHome: 399,
+        houseOptions: 398,
+        roomCreationMenu: 402
+    },
     shop: {
         widgetId: 300,
         containerId: 75,
