@@ -8,6 +8,7 @@ import { getCurrentRoom } from '@plugins/skills/construction/util';
 import { Player } from '@engine/world/actor/player/player';
 import { Coords } from '@engine/world/position';
 import { dialogue, execute, goto } from '@engine/world/actor/dialogue';
+import { saveHouse } from './home-saver';
 
 
 const newRoomOriention = (player: Player): number => {
@@ -114,8 +115,9 @@ export const roomBuilderWidgetHandler: buttonActionHandler = async ({ player, bu
         return;
     }
 
-    const createdRoom = new Room(chosenRoomType, newRoomOriention(player));
-    player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y] = createdRoom;
+    player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y] = new Room(chosenRoomType, newRoomOriention(player));
+    player.updateFlags.mapRegionUpdateRequired = true;
+    saveHouse(player);
 
     player.interfaceState.closeAllSlots();
 
@@ -125,14 +127,18 @@ export const roomBuilderWidgetHandler: buttonActionHandler = async ({ player, bu
         (options, tag_Home) => [
             'Rotate Counter-Clockwise', [
                 execute(() => {
-                    createdRoom.orientation = createdRoom.orientation > 0 ? createdRoom.orientation - 1 : 3;
+                    const room = player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y]
+                    room.orientation = room.orientation > 0 ? room.orientation - 1 : 3;
+                    saveHouse(player);
                     openHouse(player);
                 }),
                 goto('tag_Home')
             ],
             'Rotate Clockwise', [
                 execute(() => {
-                    createdRoom.orientation = createdRoom.orientation < 3 ? createdRoom.orientation + 1 : 0;
+                    const room = player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y]
+                    room.orientation = room.orientation < 3 ? room.orientation + 1 : 0;
+                    saveHouse(player);
                     openHouse(player);
                 }),
                 goto('tag_Home')
