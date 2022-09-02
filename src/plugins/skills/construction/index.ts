@@ -2,7 +2,7 @@ import { PlayerCommandAction } from '@engine/action';
 import { PlayerInitAction } from '@engine/action';
 import { instance1, instance1Max, instance2, instance2Max, roomBuilderButtonMap } from './con-constants';
 import { doorHotspotHandler, roomBuilderWidgetHandler } from './room-builder';
-import { openHouse } from './house';
+import { openHouse, openHouseWithWelcome } from './house';
 import { saveHouse } from './home-saver';
 import { widgets } from '@engine/config';
 import { houseOptions } from './house-options';
@@ -34,7 +34,7 @@ export default {
         {
             type: 'player_command',
             commands: [ 'con', 'poh', 'house' ],
-            handler: ({ player }: PlayerCommandAction): void => openHouse(player)
+            handler: ({ player }: PlayerCommandAction): void => openHouseWithWelcome(player)
         },
         {
             type: 'player_command',

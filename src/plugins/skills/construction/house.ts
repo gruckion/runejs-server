@@ -8,7 +8,20 @@ import { ConstructedChunk, ConstructedRegion } from '@engine/world/map/region';
 import { Player } from '@engine/world/actor/player/player';
 import { loadHouse } from '@plugins/skills/construction/home-saver';
 import { activeWorld } from '@engine/world';
+import { widgets } from '@engine/config/config-handler';
 
+export const openHouseWithWelcome = (player: Player): void => {
+    player.interfaceState.openWidget(widgets.poh.noPlaceLikeHome, {
+        slot: 'screen'
+    });
+
+    openHouse(player);
+
+    player.sendMessage(`Welcome home.`);
+    setTimeout(() => {
+        player.interfaceState.closeAllSlots();
+    }, 500);
+}
 
 export const openHouse = (player: Player): void => {
     let pohPosition: Position = instance1;
@@ -59,14 +72,13 @@ export const openHouse = (player: Player): void => {
             }
         }
     }
-
-    player.sendMessage(`Welcome home.`);
 };
 
 
 export class House {
 
     public rooms: Room[][][];
+    // TODO add object
 
     public constructor() {
         this.rooms = new Array(4);
