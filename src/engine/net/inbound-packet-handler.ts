@@ -39,6 +39,10 @@ export async function loadPackets(): Promise<Map<number, InboundPacket>> {
 export function handlePacket(player: Player, packetId: number, packetSize: number, buffer: ByteBuffer): boolean {
     const incomingPacket = incomingPackets.get(packetId);
 
+    if (packetId !== 13) {
+        console.log({ packetId })
+    }
+
     if(!incomingPacket) {
         logger.info(`Unknown packet ${packetId} with size ${packetSize} received.`);
         return false;

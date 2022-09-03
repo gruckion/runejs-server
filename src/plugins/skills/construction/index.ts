@@ -6,6 +6,7 @@ import { openHouse, openHouseWithWelcome } from './house';
 import { saveHouse } from './home-saver';
 import { widgets } from '@engine/config';
 import { houseOptions } from './house-options';
+import { constructionObjectHandler } from './object-builder';
 
 
 export default {
@@ -30,6 +31,14 @@ export default {
             options: 'build',
             walkTo: true,
             handler: doorHotspotHandler
+        },
+        {
+            type: 'object_interaction',
+            // TODO (Sigex): add more object interactions
+            objectIds: [ 15380, 15361, 15418 ],
+            options: 'build',
+            walkTo: true,
+            handler: constructionObjectHandler
         },
         {
             type: 'player_command',

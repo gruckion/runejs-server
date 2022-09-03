@@ -71,7 +71,7 @@ export class OutboundPacketHandler {
 
     public sendProjectile(position: Position, offsetX: number, offsetY: number, id: number, startHeight: number, endHeight: number, speed: number, lockon: number, delay: number) {
         this.updateReferencePosition(position);
-        
+
         const packet = new Packet(1);
         packet.put(0);
         packet.put(offsetY, 'byte');
@@ -85,7 +85,7 @@ export class OutboundPacketHandler {
         packet.put(16);
         packet.put(64);
         this.queue(packet);
-    } 
+    }
     public updateFriendStatus(friendName: string, worldId: number): void {
         const packet = new Packet(156);
         packet.put(stringToLong(friendName.toLowerCase()), 'LONG');
@@ -629,7 +629,7 @@ export class OutboundPacketHandler {
                     packet.putBits(1, constructedChunk === null ? 0 : 1)
                     if (constructedChunk !== null) {
                         const { templatePosition, orientation } = constructedChunk;
-                        packet.putBits(2, templatePosition?.level & 0x3);
+                        packet.putBits(2, templatePosition?.level & 0x3);// Change this to change floor style POH
                         packet.putBits(10, templatePosition?.x / 8);
                         packet.putBits(11, templatePosition?.y / 8);
                         packet.putBits(2, orientation || 0);

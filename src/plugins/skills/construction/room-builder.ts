@@ -9,6 +9,7 @@ import { Player } from '@engine/world/actor/player/player';
 import { Coords } from '@engine/world/position';
 import { dialogue, execute, goto } from '@engine/world/actor/dialogue';
 import { saveHouse } from './home-saver';
+import { widgets } from '@engine/config';
 
 
 const newRoomOriention = (player: Player): number => {
@@ -156,5 +157,5 @@ export const doorHotspotHandler: objectInteractionActionHandler = ({ player }) =
         return;
     }
 
-    player.interfaceState.openWidget(402, { slot: 'screen' });
+    player.interfaceState.openWidget(widgets.poh.roomCreationMenu, { slot: 'screen' });
 };
