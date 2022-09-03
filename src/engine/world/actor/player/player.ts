@@ -45,6 +45,7 @@ import { dialogue } from '../dialogue';
 import { Npc } from '../npc';
 import { combatStyles } from '../combat';
 import { SkillName } from '../skills';
+import { instance1, instance1Max, instance2, instance2Max } from '@plugins/skills/construction/con-constants';
 
 
 export const playerOptions: { option: string, index: number, placement: 'TOP' | 'BOTTOM' }[] = [
@@ -280,6 +281,14 @@ export class Player extends Actor {
 
         if(this.position.level > 3) {
             this.position.level = 0;
+        }
+
+        // TODO this is a temporary fix to move players out of POH area before logging out and saving
+        if(
+            this.position.within(instance1, instance1Max, false) ||
+            this.position.within(instance2, instance2Max, false)
+        ) {
+            this.position = new Position(2953, 3221, 0);
         }
 
         activeWorld.playerTree.remove(this.quadtreeKey);

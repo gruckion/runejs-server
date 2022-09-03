@@ -7,8 +7,9 @@ import { Position } from '@engine/world/position';
 import { ConstructedChunk, ConstructedRegion } from '@engine/world/map/region';
 import { Player } from '@engine/world/actor/player/player';
 import { loadHouse } from '@plugins/skills/construction/home-saver';
-import { activeWorld } from '@engine/world';
+import { activeWorld, WorldInstance } from '@engine/world';
 import { widgets } from '@engine/config/config-handler';
+import uuidv4 from 'uuid/v4';
 
 export const openHouseWithWelcome = (player: Player): void => {
     player.interfaceState.openWidget(widgets.poh.noPlaceLikeHome, {
@@ -24,6 +25,8 @@ export const openHouseWithWelcome = (player: Player): void => {
 }
 
 export const openHouse = (player: Player): void => {
+    player.instance = new WorldInstance(uuidv4());
+
     let pohPosition: Position = instance1;
     let playerSpawn: Position = instance1PohSpawn;
 

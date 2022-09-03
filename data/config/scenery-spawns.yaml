@@ -72,3 +72,11 @@
   type: 10
   orientation: 1
   # End lumby castle roof bank construction objects
+# rimmington house portal
+- objectId: 15480
+  x: 2951
+  'y': 3219
+  level: 0
+  type: 10
+  orientation: 1
+# end rimmington house portal
