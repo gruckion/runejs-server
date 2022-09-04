@@ -116,9 +116,12 @@ export const roomBuilderWidgetHandler: buttonActionHandler = async ({ player, bu
         return;
     }
 
-    player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y] = new Room(chosenRoomType, newRoomOriention(player));
+    const newRoom = new Room(chosenRoomType, newRoomOriention(player));
+    player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y] = newRoom;
     player.updateFlags.mapRegionUpdateRequired = true;
-    saveHouse(player);
+
+
+    console.log(`orientation: ${newRoom.orientation}`);
 
     player.interfaceState.closeAllSlots();
 
@@ -130,6 +133,7 @@ export const roomBuilderWidgetHandler: buttonActionHandler = async ({ player, bu
                 execute(() => {
                     const room = player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y]
                     room.orientation = room.orientation > 0 ? room.orientation - 1 : 3;
+                    console.log(`orientation: ${room.orientation}`);
                     saveHouse(player);
                     openHouse(player);
                 }),
@@ -139,12 +143,16 @@ export const roomBuilderWidgetHandler: buttonActionHandler = async ({ player, bu
                 execute(() => {
                     const room = player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y]
                     room.orientation = room.orientation < 3 ? room.orientation + 1 : 0;
+                    console.log(`orientation: ${room.orientation}`);
                     saveHouse(player);
                     openHouse(player);
                 }),
                 goto('tag_Home')
             ],
-            'Accept', [
+            'Build', [
+                execute(() => { saveHouse(player); })
+            ],
+            'Cancel', [
                 execute(() => {})
             ]
         ]
