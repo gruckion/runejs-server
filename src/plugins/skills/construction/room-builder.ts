@@ -125,6 +125,7 @@ export const roomBuilderWidgetHandler: buttonActionHandler = async ({ player, bu
 
     player.interfaceState.closeAllSlots();
 
+    saveHouse(player);
     openHouse(player);
 
     await dialogue([ player ], [
