@@ -30,6 +30,7 @@ export const openHouseWithWelcome = (player: Player): void => {
 }
 
 export const exitHouse = (player: Player): void => {
+    player.sendMessage('you exit the house')
     if(
         player.position.within(instance1, instance1Max, false) ||
         player.position.within(instance2, instance2Max, false)
@@ -38,7 +39,13 @@ export const exitHouse = (player: Player): void => {
     }
 }
 
-export const openHouse = (player: Player): void => {
+/**
+ * Creates a house instance, spawns the player into it, and loads the furniture.
+ *
+ * @param player the player
+ * @param inBuildMode If false, the furniture placeholders will be replaced with the correct objects.
+ */
+export const openHouse = (player: Player, inBuildMode = false): void => {
     player.instance = new WorldInstance(uuidv4());
 
     let pohPosition: Position = instance1;
