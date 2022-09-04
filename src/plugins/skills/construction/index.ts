@@ -74,6 +74,30 @@ export default {
                     openHouse(player);
                 }
             }
-        }
+        },
+        // {
+        //     type: 'button',
+        //     widgetId: widgets.poh.houseOptions,
+        //     buttonIds: 1,
+        //     handler: exitBuildingMode
+        // },
+        // {
+        //     type: 'button',
+        //     widgetId: widgets.poh.houseOptions,
+        //     buttonIds: 13,
+        //     handler: leaveHouse
+        // },
+        // {
+        //     type: 'button',
+        //     widgetId: widgets.poh.houseOptions,
+        //     buttonIds: 14,
+        //     handler: enterBuildingMode
+        // },
+        // {
+        //     type: 'button',
+        //     widgetId: widgets.poh.houseOptions,
+        //     buttonIds: 15,
+        //     handler: expelGuests
+        // },
     ]
 };
