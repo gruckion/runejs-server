@@ -63,7 +63,7 @@ export default {
         },
         {
             type: 'player_command',
-            commands: [ 'obj' ],
+            commands: [ 'obj', 'object' ],
             args: [{
                 name: 'objectId',
                 type: 'number'
