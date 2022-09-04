@@ -1,8 +1,8 @@
-import { Furniture } from '../types';
+import { BuildableFurnitureDefinition } from '../types';
 
 // TODO use rs:item_name here
 
-export const BUILDABLE_FURNITURE: Record<number, Furniture> = {
+export const BUILDABLE_FURNITURE: Record<number, BuildableFurnitureDefinition> = {
     // fireplaces
     8325: {
         itemId: 8325,
@@ -27,7 +27,7 @@ export const BUILDABLE_FURNITURE: Record<number, Furniture> = {
     }
 };
 
-export const FURNITURE_FOR_PLACEHOLDER: Record<number, Furniture[]> = {
+export const FURNITURE_FOR_PLACEHOLDER: Record<number, BuildableFurnitureDefinition[]> = {
     15418: [
         BUILDABLE_FURNITURE[8325],
         BUILDABLE_FURNITURE[8326],

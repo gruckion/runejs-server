@@ -94,10 +94,10 @@ export const roomBuilderButtonMap: { [key: number]: RoomType } = {
 
 
 export const instance1 = new Position(6400, 6400);
-export const instance1PohSpawn = new Position(6400 + 36, 6400 + 36);
+export const instance1PohSpawn = new Position(6400 + 35, 6400 + 37);
 export const instance1Max = new Position(6400 + 64, 6400 + 64);
 export const instance2 = new Position(6400, 6464);
-export const instance2PohSpawn = new Position(6400 + 36, 6464 + 36); // for reference
+export const instance2PohSpawn = new Position(6400 + 35, 6464 + 37); // for reference
 export const instance2Max = new Position(6400 + 64, 6464 + 64);
 
 // Standard home outer door ids: closed[13100, 13101], open[13102, 13103]

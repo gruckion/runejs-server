@@ -1,10 +1,11 @@
-import { PlayerInitAction } from '@engine/action';
+import { PlayerCommandAction, PlayerInitAction } from '@engine/action';
 import { instance1, instance1Max, instance2, instance2Max, roomBuilderButtonMap } from './con-constants';
 import { doorHotspotHandler, roomBuilderWidgetHandler } from './room-builder';
-import { openHouse } from './house';
+import { exitHouse, openHouse, openHouseWithWelcome } from './house';
 import { widgets } from '@engine/config';
 import { houseOptions } from './house-options';
 import { constructionObjectHandler } from './object-builder';
+import { saveHouse } from './home-saver';
 
 
 export default {
@@ -37,6 +38,33 @@ export default {
             options: 'build',
             walkTo: true,
             handler: constructionObjectHandler
+        },
+        {
+            type: 'object_interaction',
+            objectIds: [ 15480 ],
+            options: 'enter',
+            walkTo: true,
+            handler: ({ player }: PlayerCommandAction): void => openHouseWithWelcome(player)
+        },
+        {
+            type: 'object_interaction',
+            objectIds: [ 13405 ],
+            options: 'enter',
+            walkTo: true,
+            handler: ({ player }: PlayerCommandAction): void => exitHouse(player)
+        },
+        {
+            type: 'player_command',
+            commands: [ 'con', 'poh', 'house' ],
+            handler: ({ player }: PlayerCommandAction): void => openHouseWithWelcome(player)
+        },
+        {
+            type: 'player_command',
+            commands: [ 'savepoh', 'savehouse' ],
+            handler: ({ player }: PlayerCommandAction): void => {
+                player.sendMessage(`Saving house data...`);
+                saveHouse(player);
+            }
         },
         {
             type: 'player_init',

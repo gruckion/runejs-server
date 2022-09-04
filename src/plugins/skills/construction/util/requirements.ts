@@ -1,8 +1,8 @@
 import { findItem } from '@engine/config';
 import { Player } from '@engine/world/actor';
-import { Furniture } from '../types';
+import { BuildableFurnitureDefinition } from '../types';
 
-export function getBuildFurnitureFailureMessage(player: Player, furniture: Furniture): string | null {
+export function getBuildFurnitureFailureMessage(player: Player, furniture: BuildableFurnitureDefinition): string | null {
     if (!player.inventory.has(8794)) {
         console.log('no saw');
         return 'You need a saw and hammer in order to make furniture.';

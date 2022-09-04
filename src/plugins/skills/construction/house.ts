@@ -24,6 +24,15 @@ export const openHouseWithWelcome = (player: Player): void => {
     }, 500);
 }
 
+export const exitHouse = (player: Player): void => {
+    if(
+        player.position.within(instance1, instance1Max, false) ||
+        player.position.within(instance2, instance2Max, false)
+    ) {
+        player.position = new Position(2953, 3221, 0);
+    }
+}
+
 export const openHouse = (player: Player): void => {
     player.instance = new WorldInstance(uuidv4());
 
@@ -59,6 +68,17 @@ export const openHouse = (player: Player): void => {
     } else {
         player.metadata.customMap.renderPosition = pohPosition;
     }
+
+    const landscapeObject: LandscapeObject = {
+        objectId: 13405,
+        x: 6435,
+        y: 6435, // center of house
+        level: 0,
+        type: 10,
+        orientation: 1
+    }
+    
+    player.instance.spawnGameObject(landscapeObject);
 
     for(let plane = 0; plane < 3; plane++) {
         for(let chunkX = 0; chunkX < 13; chunkX++) {
