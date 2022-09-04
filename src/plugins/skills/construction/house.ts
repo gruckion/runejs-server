@@ -17,7 +17,7 @@ import { LandscapeObject } from '@runejs/filestore';
 import { ROOM_CONFIG } from './data';
 import { logger } from '@runejs/common';
 import { rotateChunkCoordinate } from './util/rotations';
-import { replaceRoomPlaceholder } from './room/furniture-objects';
+import { replaceFurnitureInHouse, replaceRoomPlaceholder } from './room/furniture-objects';
 
 export const openHouseWithWelcome = (player: Player): void => {
     player.interfaceState.openWidget(widgets.poh.noPlaceLikeHome, {
@@ -97,69 +97,7 @@ export const openHouse = (player: Player, inBuildMode = false): void => {
 
     replaceRoomPlaceholder(player, pohPosition, REAL_PORTAL_ID, portalPlaceholder, 6, 6, 0);
 
-    for(let plane = 0; plane < 3; plane++) {
-        for(let chunkX = 0; chunkX < 13; chunkX++) {
-            for(let chunkY = 0; chunkY < 13; chunkY++) {
-                const room = player.metadata.customMap.chunks[plane][chunkX][chunkY] as Room;
-                if(!room) {
-                    continue;
-                }
-
-                const templatePosition = room.templatePosition;
-
-                // load all the PoH template maps into memory so that their collision maps are generated
-                activeWorld.chunkManager.getChunk(templatePosition);
-
-                // place furniture into room
-
-                const roomConfig = ROOM_CONFIG[room.type];
-
-                if (!roomConfig) {
-                    logger.warn(`No room config for room type ${room.type}`);
-                    continue;
-                }
-
-                if (room.type !== 'empty' && room.type !== 'empty_grass') {
-                    for (const furniture of room.furniture) {
-                        const furnitureConfig = roomConfig.furniture[furniture.key];
-
-                        const cacheObject = findObject(furniture.replacementId);
-
-                        if (!cacheObject) {
-                            logger.warn(`No cacheObject for furniture replacementId ${furniture.replacementId}`);
-                            continue;
-                        }
-
-                        const rotatedPosition = rotateChunkCoordinate(
-                            { x: furnitureConfig.x, y: furnitureConfig.y },
-                            room.orientation,
-                            cacheObject.rendering.sizeX,
-                            cacheObject.rendering.sizeY
-                        );
-
-                        const roomX = ((chunkX - 2) * 8) + 6400;
-                        const roomY = ((chunkY - 2) * 8) + 6400;
-                        const roomOrigin = new Position(roomX, roomY, plane);
-
-                        // TODO find a neater way to do this
-                        const furnitureOrientation = (furnitureConfig.orientation + room.orientation + 2) & 3;
-
-                        const landscapeObject: LandscapeObject = {
-                            type: furnitureConfig.objectType,
-                            orientation: furnitureOrientation,
-
-                            // none of these properties are used by the packet
-                            // TODO improve the API of removeLoactionObject
-                            objectId: furniture.replacementId,
-                            x: roomOrigin.x + rotatedPosition.x,
-                            y: roomOrigin.y + rotatedPosition.y,
-                            level: plane,
-                        }
-
-                        player.instance.spawnGameObject(landscapeObject);
-                    }
-                }
-            }
-        }
+    if (!inBuildMode) {
+        replaceFurnitureInHouse(player, pohPosition);
     }
 };
