@@ -34,7 +34,7 @@ export const exitHouse = (player: Player): void => {
         player.position.within(instance1, instance1Max, false) ||
         player.position.within(instance2, instance2Max, false)
     ) {
-        player.position = new Position(2953, 3221, 0);
+        player.position = new Position(2954, 3225, 0);
     }
 }
 
