@@ -11,6 +11,8 @@ import { activeWorld, WorldInstance } from '@engine/world';
 import { findObject, widgets } from '@engine/config/config-handler';
 import uuidv4 from 'uuid/v4';
 import { Furniture } from './types';
+import { House } from './models/house'
+import { Room } from './models/room'
 import { LandscapeObject } from '@runejs/filestore';
 import { ROOM_CONFIG } from './data';
 import { logger } from '@runejs/common';
@@ -161,71 +163,3 @@ export const openHouse = (player: Player, inBuildMode = false): void => {
         }
     }
 };
-
-
-export class House {
-
-    public rooms: Room[][][];
-    // TODO add object
-
-    public constructor() {
-        this.rooms = new Array(4);
-        for(let level = 0; level < 4; level++) {
-            this.rooms[level] = new Array(MAP_SIZE);
-            for(let x = 0; x < MAP_SIZE; x++) {
-                this.rooms[level][x] = new Array(MAP_SIZE).fill(null);
-
-                if(level === 0) {
-                    for(let y = 0; y < MAP_SIZE; y++) {
-                        this.rooms[level][x][y] = new Room('empty_grass');
-                    }
-                }
-            }
-        }
-    }
-
-    public copyRooms(rooms: Room[][][]): void {
-        for(let level = 0; level < 4; level++) {
-            for(let x = 0; x < MAP_SIZE; x++) {
-                for(let y = 0; y < MAP_SIZE; y++) {
-                    const existingRoom = rooms[level][x][y] ?? null;
-                    this.rooms[level][x][y] = existingRoom ? new Room(existingRoom.type, existingRoom.orientation) : null;
-                }
-            }
-        }
-    }
-
-}
-
-
-export class Room extends ConstructedChunk {
-
-    public readonly type: RoomType;
-
-    public readonly furniture: Furniture[] = [];
-
-    public constructor(type: RoomType, orientation: number = 0) {
-        super(orientation);
-        this.type = type;
-
-        if (type === 'study') {
-            this.furniture.push({ key: 'wall_space_1', replacementId: 13662 });
-            this.furniture.push({ key: 'wall_space_2', replacementId: 13663 });
-            this.furniture.push({ key: 'wall_space_3', replacementId: 13664 });
-            this.furniture.push({ key: 'wall_space_4', replacementId: 13662 });
-
-            this.furniture.push({ key: 'bookcase_1', replacementId: 13599 });
-            this.furniture.push({ key: 'bookcase_2', replacementId: 13599 });
-
-            this.furniture.push({ key: 'globe', replacementId: 13653 });
-            this.furniture.push({ key: 'telescope', replacementId: 13656 });
-            this.furniture.push({ key: 'crystal_ball', replacementId: 13661 });
-            this.furniture.push({ key: 'lectern', replacementId: 13648 });
-        }
-    }
-
-    public getTemplatePosition(): Position {
-        return roomTemplates[this.type];
-    }
-
-}
