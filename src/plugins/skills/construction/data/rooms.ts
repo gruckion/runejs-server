@@ -30,31 +30,31 @@ export const ROOM_CONFIG: Record<RoomType, { furniture: Record<string, RoomObjec
                 x: 0, y: 1, placeholderId: 15423, objectType: 4, orientation: 0
             },
             'wall_space_2': {
-                x: 1, y: 7, placeholderId: 15423, objectType: 4, orientation: 0
+                x: 1, y: 7, placeholderId: 15423, objectType: 4, orientation: 1
             },
             'wall_space_3': {
-                x: 6, y: 7, placeholderId: 15423, objectType: 4, orientation: 0
+                x: 6, y: 7, placeholderId: 15423, objectType: 4, orientation: 1
             },
             'wall_space_4': {
-                x: 7, y: 1, placeholderId: 15423, objectType: 4, orientation: 0
+                x: 7, y: 1, placeholderId: 15423, objectType: 4, orientation: 2
             },
             'globe': {
                 x: 1, y: 4, placeholderId: 15421, objectType: 10, orientation: 0
             },
             'bookcase_1': {
-                x: 3, y: 7, placeholderId: 15425, objectType: 10, orientation: 0
+                x: 3, y: 7, placeholderId: 15425, objectType: 10, orientation: 1
             },
             'bookcase_2': {
-                x: 4, y: 7, placeholderId: 15425, objectType: 10, orientation: 0,
+                x: 4, y: 7, placeholderId: 15425, objectType: 10, orientation: 1,
             },
             'telescope' : {
-                x: 5, y: 7, placeholderId: 15424, objectType: 10, orientation: 0
+                x: 5, y: 7, placeholderId: 15424, objectType: 10, orientation: 2
             },
             'crystal_ball': {
                 x: 5, y: 2, placeholderId: 15422, objectType: 10, orientation: 0
             },
             'lectern': {
-                x: 2, y: 2, placeholderId: 15420, objectType: 10, orientation: 0
+                x: 2, y: 2, placeholderId: 15420, objectType: 10, orientation: 2
             }
         }
 
