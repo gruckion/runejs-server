@@ -288,7 +288,7 @@ export class Player extends Actor {
             this.position.within(instance1, instance1Max, false) ||
             this.position.within(instance2, instance2Max, false)
         ) {
-            this.position = new Position(2953, 3221, 0);
+            this.position = new Position(2954, 3225, 0);
         }
 
         activeWorld.playerTree.remove(this.quadtreeKey);

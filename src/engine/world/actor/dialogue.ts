@@ -615,8 +615,11 @@ async function runParsedDialogue(player: Player, dialogueTree: ParsedDialogueTre
     return tag === undefined;
 }
 
-export async function dialogue(participants: (Player | NpcParticipant)[], dialogueTree: DialogueTree,
-    additionalOptions?: AdditionalOptions): Promise<boolean> {
+export async function dialogue(
+    participants: (Player | NpcParticipant)[],
+    dialogueTree: DialogueTree,
+    additionalOptions?: AdditionalOptions
+): Promise<boolean> {
     const player = participants.find(p => p instanceof Player) as Player;
 
     if (!player) {
