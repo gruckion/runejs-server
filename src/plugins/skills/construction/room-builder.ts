@@ -113,6 +113,13 @@ const getFacingRoom = (player: Player): { coords: Coords, roomExists: boolean } 
     };
 };
 
+const deleteRoom = (player: Player, newRoomCoords: Coords) => {
+    const newRoom = new Room('empty_grass', newRoomOriention(player));
+    player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y] = newRoom;
+    player.updateFlags.mapRegionUpdateRequired = true;
+    saveHouse(player);
+    openHouse(player);
+}
 
 export const roomBuilderWidgetHandler: buttonActionHandler = async ({ player, buttonId }) => {
     const facingRoom = getFacingRoom(player);
@@ -129,9 +136,6 @@ export const roomBuilderWidgetHandler: buttonActionHandler = async ({ player, bu
     const newRoom = new Room(chosenRoomType, newRoomOriention(player));
     player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y] = newRoom;
     player.updateFlags.mapRegionUpdateRequired = true;
-
-
-    console.log(`orientation: ${newRoom.orientation}`);
 
     player.interfaceState.closeAllSlots();
 
@@ -161,23 +165,40 @@ export const roomBuilderWidgetHandler: buttonActionHandler = async ({ player, bu
                 goto('tag_Home')
             ],
             'Build', [
-                execute(() => { saveHouse(player); })
+                execute(() => {
+                    saveHouse(player);
+                    openHouse(player);
+                })
             ],
             'Cancel', [
-                execute(() => {})
+                execute(() => {
+                    deleteRoom(player, newRoomCoords)
+                })
             ]
         ]
     ]);
 };
 
 
-export const doorHotspotHandler: objectInteractionActionHandler = ({ player }) => {
+export const doorHotspotHandler: objectInteractionActionHandler = async ({ player }) => {
     const facingRoom = getFacingRoom(player);
     if(!facingRoom) {
         return;
     }
 
     if(facingRoom.roomExists) {
+        const { coords: newRoomCoords } = facingRoom;
+
+        await dialogue([ player ], [
+            (options, tag_Home) => [
+                'Yes', [
+                    execute(() => {
+                        deleteRoom(player, newRoomCoords)
+                    })
+                ],
+                'No', []
+            ]
+        ]);
         return;
     } else {
         player.interfaceState.openWidget(widgets.poh.roomCreationMenu, { slot: 'screen' });
