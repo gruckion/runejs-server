@@ -15,6 +15,7 @@ import { LandscapeObject } from '@runejs/filestore';
 import { ROOM_CONFIG } from './data';
 import { logger } from '@runejs/common';
 import { rotateChunkCoordinate } from './util/rotations';
+import { replaceRoomPlaceholder } from './room/furniture-objects';
 
 export const openHouseWithWelcome = (player: Player): void => {
     player.interfaceState.openWidget(widgets.poh.noPlaceLikeHome, {
@@ -81,16 +82,18 @@ export const openHouse = (player: Player, inBuildMode = false): void => {
         player.metadata.customMap.renderPosition = pohPosition;
     }
 
-    const landscapeObject: LandscapeObject = {
-        objectId: 13405,
-        x: 6435,
-        y: 6435, // center of house
+    const PLACEHOLDER_PORTAL_ID = 15361;
+    const REAL_PORTAL_ID = 13405;
+    const portalPlaceholder: LandscapeObject = {
+        objectId: PLACEHOLDER_PORTAL_ID,
+        x: 3,
+        y: 3, // center of house
         level: 0,
         type: 10,
         orientation: 1
     }
 
-    player.instance.spawnGameObject(landscapeObject);
+    replaceRoomPlaceholder(player, pohPosition, REAL_PORTAL_ID, portalPlaceholder, 6, 6, 0);
 
     for(let plane = 0; plane < 3; plane++) {
         for(let chunkX = 0; chunkX < 13; chunkX++) {
