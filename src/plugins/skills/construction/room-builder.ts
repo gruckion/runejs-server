@@ -49,7 +49,7 @@ const newRoomOriention = (player: Player): number => {
 };
 
 
-export const canBuildNewRoom = (player: Player): Coords | null => {
+const getFacingRoom = (player: Player): { coords: Coords, roomExists: boolean } | null => {
     const currentRoom = getCurrentRoom(player);
 
     if(!currentRoom) {
@@ -93,23 +93,33 @@ export const canBuildNewRoom = (player: Player): Coords | null => {
     const existingRoom = rooms[player.position.level][buildX][buildY];
 
     if(existingRoom && existingRoom.type !== 'empty_grass' && existingRoom.type !== 'empty') {
-        player.sendMessage(`${existingRoom.type} already exists there`); // @TODO
-        return null;
+        return {
+            coords: {
+                x: buildX,
+                y: buildY,
+                level: player.position.level
+            },
+            roomExists: true
+        };
     }
 
     return {
-        x: buildX,
-        y: buildY,
-        level: player.position.level
+        coords: {
+            x: buildX,
+            y: buildY,
+            level: player.position.level
+        },
+        roomExists: false
     };
 };
 
 
 export const roomBuilderWidgetHandler: buttonActionHandler = async ({ player, buttonId }) => {
-    const newRoomCoords = canBuildNewRoom(player);
-    if(!newRoomCoords) {
+    const facingRoom = getFacingRoom(player);
+    if(!facingRoom || facingRoom.roomExists) {
         return;
     }
+    const { coords: newRoomCoords } = facingRoom;
 
     const chosenRoomType = roomBuilderButtonMap[buttonId];
     if(!chosenRoomType) {
@@ -162,9 +172,15 @@ export const roomBuilderWidgetHandler: buttonActionHandler = async ({ player, bu
 
 
 export const doorHotspotHandler: objectInteractionActionHandler = ({ player }) => {
-    if(!canBuildNewRoom(player)) {
+    const facingRoom = getFacingRoom(player);
+    if(!facingRoom) {
         return;
     }
 
-    player.interfaceState.openWidget(widgets.poh.roomCreationMenu, { slot: 'screen' });
+    if(facingRoom.roomExists) {
+        return;
+    } else {
+        player.interfaceState.openWidget(widgets.poh.roomCreationMenu, { slot: 'screen' });
+    }
+
 };
