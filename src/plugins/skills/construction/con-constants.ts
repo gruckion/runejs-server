@@ -24,7 +24,11 @@ export type RoomType =
     | 'throne_room'
     | 'workshop'
     | 'oubliette'
-    | 'costume_room';
+    | 'costume_room'
+
+    | 'roof_shape_T'
+    | 'roof_shape_I'
+    | 'roof_shape_X';
 
 
 export const RoomStyle = {
@@ -56,11 +60,17 @@ export const roomTemplates: { [key in RoomType]: Position } = {
     games_room:     new Position(1896, 5088),
     treasure_room:  new Position(1912, 5088),
     chapel:         new Position(1872, 5096),
-    study:          new Position(1888, 5096),
+    study:          new Position(1888+64, 5096), // can shift by 1 map chunk on X for 2 more themes
     throne_room:    new Position(1904, 5096),
     workshop:       new Position(1856, 5096),
     oubliette:      new Position(1904, 5080),
-    costume_room:   new Position(1904, 5064, 0)
+    costume_room:   new Position(1904, 5064, 0),
+
+    // TODO there are other roofs at (1928, 5072) and (1944, 5072), (1960, 5072)
+
+    roof_shape_T: new Position(1880, 5072, 0),
+    roof_shape_I: new Position(1864, 5072, 0),
+    roof_shape_X: new Position(1896, 5072, 0)
 };
 
 
