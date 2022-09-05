@@ -97,6 +97,8 @@ export const getTemplateRotatedY = (orientation: number, localX: number, localY:
 
 
 
+// TODO (jameskmonger) these rotations seem wrong in practice, it seems like orientations 1 and 3 are back to front
+//              see more in plugins/construction/../rotations.ts
 export const getTemplateLocalX = (orientation: number, localX: number, localY: number,
                                   sizeX: number = 1, sizeY: number = 1): number => {
     if(orientation === 2) {

@@ -5,26 +5,27 @@ type ChunkCoordinate = {
     y: number; // 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 }
 
+/**
+ * Rotates a chunk coordinate by a given orientation
+ *
+ * This supports objects that are more than 1x1 in size, but the size
+ * parameters are optional so you can choose to just rotate coordinates.
+ *
+ * @param chunkCoordinate The chunk coordinate to rotate
+ * @param orientation The orientation to rotate by
+ * @param sizeX (optional, default 1) The size of the object in the X direction
+ * @param sizeY (optional, default 1) The size of the object in the Y direction
+ *
+ * @returns The rotated chunk coordinate
+ *
+ * @example rotateChunkCoordinate({ x: 0, y: 3 }, 1) -> { x: 3, y: 7 }
+ */
 export function rotateChunkCoordinate({ x, y }: ChunkCoordinate, orientation: number, sizeX = 1, sizeY = 1) {
-    // for some reason the base function seems to have orientation 1 and 3 swapped
-    // either its wrong there or here, but this way seems correct based on in-game testing and the unit tests
-    if (orientation === 1) {
-        const calculatedOrientation = 3;
-
-        return {
-            x: getTemplateLocalX(calculatedOrientation, x, y, sizeX, sizeY),
-            y: getTemplateLocalY(calculatedOrientation, x, y, sizeX, sizeY)
-        };
-    }
-
-    if (orientation === 3) {
-        const calculatedOrientation = 1;
-
-        return {
-            x: getTemplateLocalX(calculatedOrientation, x, y, sizeX, sizeY),
-            y: getTemplateLocalY(calculatedOrientation, x, y, sizeX, sizeY)
-        };
-    }
+    // TODO (jameskmonger) either getTemplateLocalX/Y has orientations 1/3 back to front, or I do
+    //              I think the former, but I'm not sure
+    //             I think the latter, but I'm not sure
+    //
+    //            could it be that the origin is in the top left, not the bottom left?
 
     return {
         x: getTemplateLocalX(orientation, x, y, sizeX, sizeY),

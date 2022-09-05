@@ -44,10 +44,15 @@ export const handler: itemInteractionActionHandler = ({ player, itemId }) => {
 
     const placeholderFurniture = ROOM_CONFIG[room.type].furniture[placeholderKey];
 
+    if (!placeholderFurniture) {
+        logger.warn(`no furniture found in room ${room.type} for placeholder key ${placeholderKey}`);
+        return;
+    }
+
     const cacheObject = findObject(placeholderFurniture.placeholderId);
     if (!cacheObject) {
         logger.error(`Could not find object with id ${placeholderFurniture.placeholderId} in cache when searching for placeholder.`);
-        return null;
+        return;
     }
 
     // the placeholders are stored in the room config as if the room were at orientation 0
