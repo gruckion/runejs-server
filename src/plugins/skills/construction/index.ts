@@ -6,6 +6,7 @@ import { widgets } from '@engine/config';
 import { houseOptions } from './house-options';
 import { constructionObjectHandler } from './object-builder';
 import { saveHouse } from './home-saver';
+import { FURNITURE_FOR_PLACEHOLDER } from './data';
 
 
 export default {
@@ -33,8 +34,7 @@ export default {
         },
         {
             type: 'object_interaction',
-            // TODO (Sigex): add more object interactions
-            objectIds: [ 15380, 15361, 15418 ],
+            objectIds: Object.keys(FURNITURE_FOR_PLACEHOLDER).map(n => parseInt(n)),
             options: 'build',
             walkTo: true,
             handler: constructionObjectHandler
