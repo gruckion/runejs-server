@@ -194,7 +194,7 @@ const CHAIR_FURNITURE: BuildableFurnitureDefinition[] = [
     BUILDABLE_FURNITURE[8498],
     BUILDABLE_FURNITURE[8500],
 
-    // TODO (Sigex) these are commented out until the interface supports > 3 items
+    // TODO (Sigex) these are commented out until the interface supports > 3
     // BUILDABLE_FURNITURE[8502],
     // BUILDABLE_FURNITURE[8504],
     // BUILDABLE_FURNITURE[8506],

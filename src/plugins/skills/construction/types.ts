@@ -1,6 +1,6 @@
 export type BuildableFurnitureDefinition = {
     itemId: number;
-    placeholderId: number; // TODO (Sigex): This is not needed we can remove this soon.
+    placeholderId: number; // TODO (Sigex): This might not be needed will consider once we have remove object working
     objectId: number;
     level: number;
     experience?: number;
