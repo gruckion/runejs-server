@@ -31,6 +31,12 @@ export class House {
                 }
             }
         }
+
+        // TODO remove example hack
+        this.rooms[0][3][6] = new Room('study');
+        this.rooms[1][3][6] = new Room('study');
+        this.rooms[2][3][6] = new Room('study');
+        this.rooms[3][3][6] = new Room('roof_shape_I');
     }
 
 }
