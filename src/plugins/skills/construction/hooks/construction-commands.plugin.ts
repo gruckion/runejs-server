@@ -2,7 +2,7 @@ import { commandActionHandler, PlayerCommandAction } from '@engine/action';
 import { openHouseWithWelcome } from '../house';
 import { saveHouse } from '../home-saver';
 import { findObject } from '@engine/config';
-import { ConstructedRegion, Position, activeWorld} from '@engine/world';
+import { ConstructedRegion, Position, activeWorld } from '@engine/world';
 import { LandscapeObject } from '@runejs/filestore';
 import { MAP_SIZE, RoomType, roomTemplates } from '../con-constants';
 import { ROOM_CONFIG } from '../data';

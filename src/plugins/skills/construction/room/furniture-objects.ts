@@ -11,13 +11,13 @@ import { rotateChunkCoordinate } from '../util/rotations';
 /**
 * Spawns an object in a room.
 *
-* TODO should Room be made aware of its local (chunk) position? This would allow us to remove the chunkX/Y/Plane params
+* TODO should Room be made aware of its local (chunk) position? This would allow us to remove the roomChunkX/Y/Plane params
 *
 * @author jameskmonger
 */
-export function replaceRoomPlaceholder(player: Player, pohPosition: Position, replacementId: number, placeholderObject: LandscapeObject, chunkX: number, chunkY: number, plane: number) {
-    const roomX = ((chunkX - 2) * 8) + pohPosition.x;
-    const roomY = ((chunkY - 2) * 8) + pohPosition.y;
+export function replaceRoomPlaceholder(player: Player, pohPosition: Position, replacementId: number, placeholderObject: LandscapeObject, roomChunkX: number, roomChunkY: number, plane: number) {
+    const roomX = ((roomChunkX - 2) * 8) + pohPosition.x;
+    const roomY = ((roomChunkY - 2) * 8) + pohPosition.y;
     const roomOrigin = new Position(roomX, roomY, plane);
 
     const adjustedPlaceholder = {
