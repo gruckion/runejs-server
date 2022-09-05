@@ -210,6 +210,7 @@ export class Position {
         };
     }
 
+    // TODO (jameskmonger) add docs to these methods below - chunkLocalX/chunkLocalY are not obvious what they are (they aren't the X and Y within the chunk)
     public get chunkX(): number {
         return (this._x >> 3) - 6;
     }
