@@ -1,14 +1,15 @@
 import { commandActionHandler, PlayerCommandAction } from '@engine/action';
-import { openHouseWithWelcome, Room } from '../house';
+import { openHouseWithWelcome } from '../house';
 import { saveHouse } from '../home-saver';
 import { findObject } from '@engine/config';
-import { ConstructedRegion, Position } from '@engine/world';
+import { ConstructedRegion, Position, activeWorld} from '@engine/world';
 import { LandscapeObject } from '@runejs/filestore';
-import { MAP_SIZE, RoomType } from '../con-constants';
+import { MAP_SIZE, RoomType, roomTemplates } from '../con-constants';
 import { ROOM_CONFIG } from '../data';
 import { getCurrentRoom } from '../util';
 import { rotateChunkCoordinate } from '../util/rotations';
 import { logger } from '@runejs/common';
+import { Room } from '../models/room';
 
 const noBuildModeAction: commandActionHandler = ({ player, args }) => {
     const customMap: ConstructedRegion = player.metadata?.customMap;
@@ -100,5 +101,72 @@ export default {
             commands: [ 'nobuild' ],
             handler: noBuildModeAction
         },
+        {
+            type: 'player_command',
+            commands: [ 'dumpfurn' ],
+            handler: ({ player }: PlayerCommandAction): void => {
+                const roomCoords = getCurrentRoom(player);
+
+                if (!roomCoords) {
+                    player.sendMessage('You must be in a room to run this command');
+                    return;
+                }
+
+                const room = player.metadata.customMap.chunks[roomCoords.level][roomCoords.x][roomCoords.y] as Room;
+
+                const template = roomTemplates[room.type];
+
+                player.sendMessage(`[temp] room type: ${room.type}`);
+
+                // any objects that say `null`, walls, etc
+                const BAD_OBJECT_IDS = [
+                    13098, 13830, 15313, 15314
+                ];
+
+                player.sendMessage(`[temp] template ${template.x}, ${template.y}, ${0}`);
+
+                const out: Record<string, { placeholderId: number, x: number, y: number, orientation: number, objectType: number }> = {};
+
+                // for (const objectId of OBJECT_IDS) {
+                for (let objectId = 3000; objectId < 20000; objectId++) {
+                    if (BAD_OBJECT_IDS.includes(objectId)) {
+                        continue;
+                    }
+
+                    for (let x = 0; x <= 7; x++) {
+                        for (let y = 0; y <= 7; y++) {
+                            const worldX = template.x + x;
+                            const worldY = template.y + y;
+
+                            const objectPosition = new Position(worldX, worldY, 0);
+
+                            const objectChunk = activeWorld.chunkManager.getChunkForWorldPosition(objectPosition);
+                            const filestoreObject = objectChunk.getFilestoreLandscapeObject(objectId, objectPosition);
+
+                            if (filestoreObject) {
+                                const config = findObject(objectId);
+                                player.sendMessage('go and read the console! there is nothing for you here! hee hee')
+
+                                if (config.name === 'null' || !config.name) {
+                                    continue;
+                                }
+
+                                out[`${config.name}_${x}_${y}`.toLowerCase().replace(/ /g, '_')] = ({
+                                    placeholderId: objectId,
+                                    x,
+                                    y,
+                                    orientation: filestoreObject.orientation,
+                                    objectType: filestoreObject.type
+                                })
+                            }
+                        }
+                    }
+                }
+
+                console.log(JSON.stringify(out, null, 4));
+
+                player.sendMessage(`done! hee hee!`)
+            }
+        }
     ]
 };
