@@ -1,13 +1,17 @@
 import {
     objectInteractionActionHandler
 } from '@engine/action/pipe/object-interaction.action';
-import { openHouse, Room } from '@plugins/skills/construction/house';
-import { MAP_SIZE, roomBuilderButtonMap } from '@plugins/skills/construction/con-constants';
 import { buttonActionHandler } from '@engine/action/pipe/button.action';
-import { getCurrentRoom } from '@plugins/skills/construction/util';
 import { Player } from '@engine/world/actor/player/player';
 import { Coords } from '@engine/world/position';
 import { dialogue, execute, goto } from '@engine/world/actor/dialogue';
+import { saveHouse } from './home-saver';
+import { widgets } from '@engine/config';
+
+import { getCurrentRoom } from './util';
+import { MAP_SIZE, roomBuilderButtonMap } from './con-constants';
+import { openHouse } from './house';
+import { Room } from './models/room';
 
 
 const newRoomOriention = (player: Player): number => {
@@ -47,7 +51,7 @@ const newRoomOriention = (player: Player): number => {
 };
 
 
-export const canBuildNewRoom = (player: Player): Coords | null => {
+const getFacingRoom = (player: Player): { coords: Coords, roomExists: boolean } | null => {
     const currentRoom = getCurrentRoom(player);
 
     if(!currentRoom) {
@@ -91,64 +95,115 @@ export const canBuildNewRoom = (player: Player): Coords | null => {
     const existingRoom = rooms[player.position.level][buildX][buildY];
 
     if(existingRoom && existingRoom.type !== 'empty_grass' && existingRoom.type !== 'empty') {
-        player.sendMessage(`${existingRoom.type} already exists there`); // @TODO
-        return null;
+        return {
+            coords: {
+                x: buildX,
+                y: buildY,
+                level: player.position.level
+            },
+            roomExists: true
+        };
     }
 
     return {
-        x: buildX,
-        y: buildY,
-        level: player.position.level
+        coords: {
+            x: buildX,
+            y: buildY,
+            level: player.position.level
+        },
+        roomExists: false
     };
 };
 
+const deleteRoom = (player: Player, newRoomCoords: Coords) => {
+    const newRoom = new Room('empty_grass', newRoomOriention(player));
+    player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y] = newRoom;
+    player.updateFlags.mapRegionUpdateRequired = true;
+    saveHouse(player);
+    openHouse(player);
+}
 
 export const roomBuilderWidgetHandler: buttonActionHandler = async ({ player, buttonId }) => {
-    const newRoomCoords = canBuildNewRoom(player);
-    if(!newRoomCoords) {
+    const facingRoom = getFacingRoom(player);
+    if(!facingRoom || facingRoom.roomExists) {
         return;
     }
+    const { coords: newRoomCoords } = facingRoom;
 
     const chosenRoomType = roomBuilderButtonMap[buttonId];
     if(!chosenRoomType) {
         return;
     }
 
-    const createdRoom = new Room(chosenRoomType, newRoomOriention(player));
-    player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y] = createdRoom;
+    const newRoom = new Room(chosenRoomType, newRoomOriention(player));
+    player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y] = newRoom;
+    player.updateFlags.mapRegionUpdateRequired = true;
 
     player.interfaceState.closeAllSlots();
 
+    saveHouse(player);
     openHouse(player);
 
     await dialogue([ player ], [
         (options, tag_Home) => [
             'Rotate Counter-Clockwise', [
                 execute(() => {
-                    createdRoom.orientation = createdRoom.orientation > 0 ? createdRoom.orientation - 1 : 3;
+                    const room = player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y]
+                    room.orientation = room.orientation > 0 ? room.orientation - 1 : 3;
+                    console.log(`orientation: ${room.orientation}`);
+                    saveHouse(player);
                     openHouse(player);
                 }),
                 goto('tag_Home')
             ],
             'Rotate Clockwise', [
                 execute(() => {
-                    createdRoom.orientation = createdRoom.orientation < 3 ? createdRoom.orientation + 1 : 0;
+                    const room = player.metadata.customMap.chunks[newRoomCoords.level][newRoomCoords.x][newRoomCoords.y]
+                    room.orientation = room.orientation < 3 ? room.orientation + 1 : 0;
+                    console.log(`orientation: ${room.orientation}`);
+                    saveHouse(player);
                     openHouse(player);
                 }),
                 goto('tag_Home')
             ],
-            'Accept', [
-                execute(() => {})
+            'Build', [
+                execute(() => {
+                    saveHouse(player);
+                    openHouse(player);
+                })
+            ],
+            'Cancel', [
+                execute(() => {
+                    deleteRoom(player, newRoomCoords)
+                })
             ]
         ]
     ]);
 };
 
 
-export const doorHotspotHandler: objectInteractionActionHandler = ({ player }) => {
-    if(!canBuildNewRoom(player)) {
+export const doorHotspotHandler: objectInteractionActionHandler = async ({ player }) => {
+    const facingRoom = getFacingRoom(player);
+    if(!facingRoom) {
         return;
     }
 
-    player.interfaceState.openWidget(402, { slot: 'screen' });
+    if(facingRoom.roomExists) {
+        const { coords: newRoomCoords } = facingRoom;
+
+        await dialogue([ player ], [
+            (options, tag_Home) => [
+                'Yes', [
+                    execute(() => {
+                        deleteRoom(player, newRoomCoords)
+                    })
+                ],
+                'No', []
+            ]
+        ]);
+        return;
+    } else {
+        player.interfaceState.openWidget(widgets.poh.roomCreationMenu, { slot: 'screen' });
+    }
+
 };

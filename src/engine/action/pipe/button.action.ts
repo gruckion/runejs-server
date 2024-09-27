@@ -45,6 +45,7 @@ export interface ButtonAction {
  * @param buttonId
  */
 const buttonActionPipe = (player: Player, widgetId: number, buttonId: number): RunnableHooks<ButtonAction> => {
+    console.log({ widgetId, buttonId })
     let matchingHooks = getActionHooks<ButtonActionHook>('button')
         .filter(plugin =>
             questHookFilter(player, plugin) && (
@@ -55,6 +56,7 @@ const buttonActionPipe = (player: Player, widgetId: number, buttonId: number): R
             advancedNumberHookFilter(plugin.buttonIds, buttonId))
         );
 
+    console.log({ matchingHooks })
     const questActions = matchingHooks.filter(plugin => plugin.questRequirement !== undefined);
 
     if(questActions.length !== 0) {

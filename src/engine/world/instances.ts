@@ -333,8 +333,11 @@ export class WorldInstance {
         const { chunk: instancedChunk, mods } = this.getTileModifications(position);
 
         if(mods.spawnedObjects.find(o => o.x === object.x && o.y === object.y && o.level === object.level && o.type === object.type)) {
+            logger.warn(`Attempted to spawn object ${object.objectId} at (${object.x}, ${object.y}, ${object.level}) in instance ${this.instanceId} but it already exists.`);
             return;
         }
+
+        // logger.info(`Spawning object ${object.objectId} at (${object.x}, ${object.y}, ${object.level}) in instance ${this.instanceId}.`);
 
         mods.spawnedObjects.push(object);
         instancedChunk.mods.set(position.key, mods);
@@ -354,6 +357,7 @@ export class WorldInstance {
         const instancedChunk = this.getInstancedChunk(position);
 
         if(!instancedChunk.mods.has(position.key)) {
+            logger.warn('Tried to de-spawn a game object that was not spawned.');
             // Object no longer exists
             return;
         }
@@ -386,6 +390,7 @@ export class WorldInstance {
 
         const { chunk: instancedChunk, mods } = this.getTileModifications(position);
 
+        // console.log(`Hiding object ${object.objectId} at (${object.x}, ${object.y}, ${object.level}) in instance ${this.instanceId}.`);
         mods.hiddenObjects.push(object);
         instancedChunk.mods.set(position.key, mods);
 

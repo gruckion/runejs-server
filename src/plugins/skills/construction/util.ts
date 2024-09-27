@@ -22,6 +22,7 @@ export const getCurrentRoom = (player: Player): Coords | null => {
     const topCornerMapChunk = activeWorld.chunkManager.getChunkForWorldPosition(new Position(mapWorldX, mapWorldY, player.position.level));
     const playerChunk = activeWorld.chunkManager.getChunkForWorldPosition(player.position);
 
+    // TODO why do we -2 here?
     const currentRoomX = playerChunk.position.x - (topCornerMapChunk.position.x - 2);
     const currentRoomY = playerChunk.position.y - (topCornerMapChunk.position.y - 2);
 

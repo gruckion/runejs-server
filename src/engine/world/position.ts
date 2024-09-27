@@ -44,6 +44,10 @@ export class Position {
         return new Position(this.x, this.y, this.level);
     }
 
+    public add(x: number, y: number, level: number = 0) {
+        return new Position(this.x + x, this.y + y, this.level + level);
+    }
+
     public withinInteractionDistance(gameObject: LandscapeObject, minimumDistance?: number): boolean;
     public withinInteractionDistance(position: Position, minimumDistance?: number): boolean;
     public withinInteractionDistance(target: LandscapeObject | Position, minimumDistance?: number): boolean;
@@ -206,6 +210,7 @@ export class Position {
         };
     }
 
+    // TODO (jameskmonger) add docs to these methods below - chunkLocalX/chunkLocalY are not obvious what they are (they aren't the X and Y within the chunk)
     public get chunkX(): number {
         return (this._x >> 3) - 6;
     }

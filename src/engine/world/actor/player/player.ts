@@ -45,6 +45,7 @@ import { dialogue } from '../dialogue';
 import { Npc } from '../npc';
 import { combatStyles } from '../combat';
 import { SkillName } from '../skills';
+import { instance1, instance1Max, instance2, instance2Max } from '@plugins/skills/construction/con-constants';
 
 
 export const playerOptions: { option: string, index: number, placement: 'TOP' | 'BOTTOM' }[] = [
@@ -75,6 +76,8 @@ export enum SidebarTab {
     EQUIMENT,
     PRAYER,
     MAGIC,
+    // Sigex: Empty space needed to ensue enum index matches with sidebar tab position
+    EMPTY,
     FRIENDS,
     IGNORE,
     LOGOUT,
@@ -278,6 +281,14 @@ export class Player extends Actor {
 
         if(this.position.level > 3) {
             this.position.level = 0;
+        }
+
+        // TODO this is a temporary fix to move players out of POH area before logging out and saving
+        if(
+            this.position.within(instance1, instance1Max, false) ||
+            this.position.within(instance2, instance2Max, false)
+        ) {
+            this.position = new Position(2954, 3225, 0);
         }
 
         activeWorld.playerTree.remove(this.quadtreeKey);
@@ -578,6 +589,31 @@ export class Player extends Actor {
      */
     public setSidebarWidget(sidebarId: SidebarTab, widgetId: number | null): void {
         this.outgoingPackets.sendTabWidget(sidebarId, widgetId || null);
+    }
+    /**
+     * Sets all of players side bars to the default tabs
+     */
+    public initializeSidebarWidgets() {
+        defaultPlayerTabWidgets().forEach((widgetId: number, tabIndex: number) => {
+            if(widgetId !== -1) {
+                this.setSidebarWidget(tabIndex, widgetId);
+            }
+        });
+    }
+
+    /**
+     * Hide all sidebars except those provided in the excluded list
+     * @param excludedSidebars sidebars to not hide
+     */
+    public hideAllSidebarWidgets(excludedSidebars: SidebarTab[] = []) {
+
+        for(let i = 0; i < Object.keys(SidebarTab).length; i++) {
+            if (excludedSidebars.includes(i)) {
+                continue
+            }
+            this.outgoingPackets.sendTabWidget(i, null);
+
+        }
     }
 
     /**

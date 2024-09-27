@@ -117,6 +117,7 @@ export class World {
             cacheOriginal = false;
 
             if(!landscapeObject) {
+                logger.warn(`Could not find landscapeObject object ${objectId} at (${x}, ${y})`);
                 return { object: null, cacheOriginal: false };
             }
         }
@@ -127,8 +128,11 @@ export class World {
             hiddenTileObjects.push(...personalTileModifications.mods.hiddenObjects);
         }
 
-        if(hiddenTileObjects.findIndex(spawnedObject =>
-            spawnedObject.objectId === objectId && spawnedObject.x === x && spawnedObject.y === y) !== -1) {
+        const objectIsHidden = hiddenTileObjects.some(spawnedObject =>
+            spawnedObject.objectId === objectId && spawnedObject.x === x && spawnedObject.y === y)
+
+        if(objectIsHidden) {
+            logger.warn(`Tried to interact with hidden object ${objectId} at (${x}, ${y})`);
             return { object: null, cacheOriginal: false };
         }
 
@@ -148,12 +152,14 @@ export class World {
         const map = actor?.metadata?.customMap as ConstructedRegion || null;
 
         if(!map) {
+            logger.warn(`Could not find custom map for actor`);
             return null;
         }
 
         const objectConfig = findObject(objectId);
 
         if(!objectConfig) {
+            logger.error(`Could not find object config for object ${objectId}`);
             return null;
         }
 
@@ -186,6 +192,7 @@ export class World {
         const realObject = mapTemplateChunk.getFilestoreLandscapeObject(objectId, templateObjectPosition);
 
         if(!realObject) {
+            logger.error(`Could not find template object ${objectId} at (${templateObjectPosition.x}, ${templateObjectPosition.y})`);
             return null;
         }
 

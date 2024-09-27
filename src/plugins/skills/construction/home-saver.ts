@@ -4,7 +4,9 @@ import JSON5 from 'json5';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { logger } from '@runejs/common';
 import { join } from 'path';
-import { House, Room } from '@plugins/skills/construction/house';
+
+import { House } from './models/house';
+import { Room } from './models/room';
 
 
 /**

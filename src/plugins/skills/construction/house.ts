@@ -7,10 +7,50 @@ import { Position } from '@engine/world/position';
 import { ConstructedChunk, ConstructedRegion } from '@engine/world/map/region';
 import { Player } from '@engine/world/actor/player/player';
 import { loadHouse } from '@plugins/skills/construction/home-saver';
-import { activeWorld } from '@engine/world';
+import { activeWorld, WorldInstance } from '@engine/world';
+import { findObject, widgets } from '@engine/config/config-handler';
+import uuidv4 from 'uuid/v4';
+import { Furniture } from './types';
+import { House } from './models/house'
+import { Room } from './models/room'
+import { LandscapeObject } from '@runejs/filestore';
+import { ROOM_CONFIG } from './data';
+import { logger } from '@runejs/common';
+import { rotateChunkCoordinate } from './util/rotations';
+import { replaceFurnitureInHouse, replaceRoomPlaceholder } from './room/furniture-objects';
 
+export const openHouseWithWelcome = (player: Player): void => {
+    player.interfaceState.openWidget(widgets.poh.noPlaceLikeHome, {
+        slot: 'screen'
+    });
 
-export const openHouse = (player: Player): void => {
+    openHouse(player);
+
+    player.sendMessage(`Welcome home.`);
+    setTimeout(() => {
+        player.interfaceState.closeAllSlots();
+    }, 500);
+}
+
+export const exitHouse = (player: Player): void => {
+    player.sendMessage('you exit the house')
+    if(
+        player.position.within(instance1, instance1Max, false) ||
+        player.position.within(instance2, instance2Max, false)
+    ) {
+        player.position = new Position(2954, 3225, 0);
+    }
+}
+
+/**
+ * Creates a house instance, spawns the player into it, and loads the furniture.
+ *
+ * @param player the player
+ * @param inBuildMode If false, the furniture placeholders will be replaced with the correct objects.
+ */
+export const openHouse = (player: Player, inBuildMode = false): void => {
+    player.instance = new WorldInstance(uuidv4());
+
     let pohPosition: Position = instance1;
     let playerSpawn: Position = instance1PohSpawn;
 
@@ -44,71 +84,20 @@ export const openHouse = (player: Player): void => {
         player.metadata.customMap.renderPosition = pohPosition;
     }
 
-    for(let plane = 0; plane < 3; plane++) {
-        for(let chunkX = 0; chunkX < 13; chunkX++) {
-            for(let chunkY = 0; chunkY < 13; chunkY++) {
-                const room = player.metadata.customMap.chunks[plane][chunkX][chunkY];
-                if(!room) {
-                    continue;
-                }
-
-                const templatePosition = room.templatePosition;
-
-                // load all the PoH template maps into memory so that their collision maps are generated
-                activeWorld.chunkManager.getChunk(templatePosition);
-            }
-        }
+    const PLACEHOLDER_PORTAL_ID = 15361;
+    const REAL_PORTAL_ID = 13405;
+    const portalPlaceholder: LandscapeObject = {
+        objectId: PLACEHOLDER_PORTAL_ID,
+        x: 3,
+        y: 3, // center of house
+        level: 0,
+        type: 10,
+        orientation: 1
     }
 
-    player.sendMessage(`Welcome home.`);
+    replaceRoomPlaceholder(player, pohPosition, REAL_PORTAL_ID, portalPlaceholder, 6, 6, 0);
+
+    if (!inBuildMode) {
+        replaceFurnitureInHouse(player, pohPosition);
+    }
 };
-
-
-export class House {
-
-    public rooms: Room[][][];
-
-    public constructor() {
-        this.rooms = new Array(4);
-        for(let level = 0; level < 4; level++) {
-            this.rooms[level] = new Array(MAP_SIZE);
-            for(let x = 0; x < MAP_SIZE; x++) {
-                this.rooms[level][x] = new Array(MAP_SIZE).fill(null);
-
-                if(level === 0) {
-                    for(let y = 0; y < MAP_SIZE; y++) {
-                        this.rooms[level][x][y] = new Room('empty_grass');
-                    }
-                }
-            }
-        }
-    }
-
-    public copyRooms(rooms: Room[][][]): void {
-        for(let level = 0; level < 4; level++) {
-            for(let x = 0; x < MAP_SIZE; x++) {
-                for(let y = 0; y < MAP_SIZE; y++) {
-                    const existingRoom = rooms[level][x][y] ?? null;
-                    this.rooms[level][x][y] = existingRoom ? new Room(existingRoom.type, existingRoom.orientation) : null;
-                }
-            }
-        }
-    }
-
-}
-
-
-export class Room extends ConstructedChunk {
-
-    public readonly type: RoomType;
-
-    public constructor(type: RoomType, orientation: number = 0) {
-        super(orientation);
-        this.type = type;
-    }
-
-    public getTemplatePosition(): Position {
-        return roomTemplates[this.type];
-    }
-
-}
